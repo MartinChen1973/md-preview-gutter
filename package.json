@@ -19,7 +19,9 @@
   "license": "MIT",
   "scripts": {
     "package": "vsce package --allow-missing-repository",
-    "publish:ovsx": "ovsx publish --allow-missing-repository"
+    "publish:vscode": "node scripts/publish.js vscode",
+    "publish:ovsx": "node scripts/publish.js ovsx",
+    "publish:all": "node scripts/publish.js all"
   },
   "dependencies": {
     "markdown-it": "^14.1.0",
