@@ -1,0 +1,29 @@
+:root {
+  --md-preview-gutter-width: 3.5em;
+}
+
+body {
+  position: relative;
+  padding-left: var(--md-preview-gutter-width);
+}
+
+#md-preview-gutter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--md-preview-gutter-width);
+  min-height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.md-preview-gutter-mark {
+  position: absolute;
+  right: 0.45em;
+  transform: translateY(0.15em);
+  font-size: 0.75em;
+  line-height: 1;
+  color: var(--vscode-editorLineNumber-foreground);
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}

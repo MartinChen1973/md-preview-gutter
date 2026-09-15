@@ -1,0 +1,73 @@
+{
+  "name": "md-preview-gutter",
+  "displayName": "Markdown Preview Gutter",
+  "description": "Default Markdown preview with 1-based source line numbers.",
+  "version": "0.1.4",
+  "publisher": "MartinChen1973",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:markdown",
+    "onCustomEditor:mdPreviewGutter.editor",
+    "onCommand:mdPreviewGutter.open"
+  ],
+  "main": "./extension.js",
+  "license": "MIT",
+  "scripts": {
+    "package": "vsce package --allow-missing-repository",
+    "publish:ovsx": "ovsx publish --allow-missing-repository"
+  },
+  "dependencies": {
+    "markdown-it": "^14.1.0",
+    "markdown-it-multimd-table": "^4.2.3"
+  },
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "mdPreviewGutter.editor",
+        "displayName": "Markdown Preview Gutter",
+        "selector": [
+          {
+            "filenamePattern": "*.md"
+          },
+          {
+            "filenamePattern": "*.markdown"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "commands": [
+      {
+        "command": "mdPreviewGutter.open",
+        "title": "Open Preview with Line Numbers",
+        "category": "Markdown Preview Gutter"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceLangId == markdown",
+          "command": "mdPreviewGutter.open",
+          "group": "navigation"
+        }
+      ]
+    },
+    "markdown.previewStyles": [
+      "./preview.css"
+    ],
+    "markdown.previewScripts": [
+      "./preview.js"
+    ],
+    "configurationDefaults": {
+      "workbench.editorAssociations": {
+        "*.md": "mdPreviewGutter.editor",
+        "*.markdown": "mdPreviewGutter.editor"
+      }
+    }
+  }
+}

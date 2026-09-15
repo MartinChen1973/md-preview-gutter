@@ -1,0 +1,13 @@
+.git/**
+.gitignore
+.env
+.env.*
+!.env.example
+.specstory/**
+install.ps1
+publish.ps1
+publish-md-preview-gutter.bat
+publish-md-preview-gutter.ps1
+media/gutter-test.html
+media/build-gutter-test.js
+**/*.vsix
