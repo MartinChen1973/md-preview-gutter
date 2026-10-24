@@ -18,32 +18,6 @@ body {
   overflow: hidden;
 }
 
-#toggle-group {
-  position: absolute;
-  top: 4px;
-  right: 10px;
-  z-index: 10;
-  display: flex;
-  gap: 2px;
-}
-
-.toggle-tab {
-  border: none;
-  background: transparent;
-  color: var(--vscode-foreground);
-  font-size: 11px;
-  padding: 2px 8px;
-  cursor: pointer;
-  border-radius: 3px;
-  opacity: 0.6;
-}
-
-.toggle-tab.active {
-  opacity: 1;
-  background: var(--vscode-toolbar-activeBackground, rgba(128, 128, 128, 0.2));
-  font-weight: 500;
-}
-
 #preview-wrap,
 #source-wrap {
   flex: 1;
@@ -58,7 +32,7 @@ body[data-mode='source'] #preview-wrap {
 
 #preview-wrap {
   overflow: auto;
-  padding: 2.2em 2em 2em var(--md-preview-gutter-width);
+  padding: 2em 2em 2em var(--md-preview-gutter-width);
 }
 
 #md-preview-gutter {
@@ -67,6 +41,10 @@ body[data-mode='source'] #preview-wrap {
   left: 0;
   width: var(--md-preview-gutter-width);
   pointer-events: none;
+}
+
+.md-preview-gutter-target {
+  background: var(--vscode-editor-selectionBackground, #264f78);
 }
 
 .md-preview-gutter-mark {

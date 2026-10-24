@@ -34,10 +34,6 @@ function buildWebviewHtml(webview, extensionUri) {
   <link rel="stylesheet" href="${cssUri}" />
 </head>
 <body data-mode="${MODE_PREVIEW}">
-  <div id="toggle-group">
-    <button type="button" class="toggle-tab" data-mode="preview">Preview</button>
-    <button type="button" class="toggle-tab" data-mode="source">Markdown</button>
-  </div>
   <div id="preview-wrap">
     <div id="md-preview-gutter"></div>
     <div id="preview" class="markdown-body"></div>

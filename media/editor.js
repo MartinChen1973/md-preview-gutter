@@ -5,13 +5,16 @@ const LINE_SELECTOR = '.code-line[data-line]';
 const LINE_ATTR = 'data-line';
 const LINE_NUMBER_OFFSET = 1;
 const MODE_PREVIEW = 'preview';
-const MODE_SOURCE = 'source';
 const MESSAGE_READY = 'ready';
 const MESSAGE_INIT = 'init';
 const MESSAGE_UPDATE = 'update';
 const MESSAGE_EDIT = 'edit';
+const MESSAGE_SET_MODE = 'setMode';
+const MESSAGE_OPEN_LINK = 'openLink';
+const MESSAGE_REVEAL_LINE = 'revealLine';
+const TARGET_CLASS = 'md-preview-gutter-target';
+const CENTER_DIVISOR = 2;
 const BODY_MODE_ATTR = 'data-mode';
-const ACTIVE_CLASS = 'active';
 const NEWLINE = '\n';
 
 const previewEl = document.getElementById('preview');
@@ -70,9 +73,6 @@ function layoutSourceGutter(text) {
 
 function setMode(mode) {
   document.body.setAttribute(BODY_MODE_ATTR, mode);
-  for (const button of document.querySelectorAll('.toggle-tab')) {
-    button.classList.toggle(ACTIVE_CLASS, button.dataset.mode === mode);
-  }
   if (mode === MODE_PREVIEW) {
     requestAnimationFrame(layoutPreviewGutter);
   }
@@ -87,7 +87,17 @@ function applySnapshot(message) {
     setMode(message.mode);
   }
   applyingFromHost = false;
-  requestAnimationFrame(layoutPreviewGutter);
+  requestAnimationFrame(() => {
+    layoutPreviewGutter();
+    revealAfterLayout(message.line);
+  });
+}
+
+function revealAfterLayout(line) {
+  if (!line) {
+    return;
+  }
+  revealCitedLine(line);
 }
 
 function onHostMessage(event) {
@@ -95,6 +105,8 @@ function onHostMessage(event) {
   const handlers = {
     [MESSAGE_INIT]: () => applySnapshot(message),
     [MESSAGE_UPDATE]: () => applySnapshot(message),
+    [MESSAGE_SET_MODE]: () => setMode(message.mode),
+    [MESSAGE_REVEAL_LINE]: () => revealCitedLine(message.line),
   };
   handlers[message.type]?.();
 }
@@ -107,10 +119,63 @@ function onSourceInput() {
   vscode.postMessage({ type: MESSAGE_EDIT, text: sourceEl.value });
 }
 
-for (const button of document.querySelectorAll('.toggle-tab')) {
-  button.addEventListener('click', () => setMode(button.dataset.mode));
+function revealCitedLine(lineNumber) {
+  revealPreviewLine(lineNumber);
+  revealSourceLine(lineNumber);
 }
 
+function revealPreviewLine(lineNumber) {
+  const index = lineNumber - LINE_NUMBER_OFFSET;
+  const chosen = elementAtOrBefore(previewEl.querySelectorAll(LINE_SELECTOR), index);
+  if (!chosen) {
+    return;
+  }
+  markTarget(chosen);
+  const top = chosen.getBoundingClientRect().top
+    - previewWrap.getBoundingClientRect().top
+    + previewWrap.scrollTop;
+  previewWrap.scrollTop = top - previewWrap.clientHeight / CENTER_DIVISOR;
+}
+
+function elementAtOrBefore(elements, index) {
+  let chosen = null;
+  for (const element of elements) {
+    const line = Number(element.getAttribute(LINE_ATTR));
+    if (line <= index) {
+      chosen = element;
+    }
+  }
+  return chosen;
+}
+
+function markTarget(element) {
+  const previous = previewEl.querySelector(`.${TARGET_CLASS}`);
+  if (previous) {
+    previous.classList.remove(TARGET_CLASS);
+  }
+  element.classList.add(TARGET_CLASS);
+}
+
+function revealSourceLine(lineNumber) {
+  const count = Math.max(sourceEl.value.split(NEWLINE).length, LINE_NUMBER_OFFSET);
+  const height = sourceEl.scrollHeight / count;
+  const index = Math.max(lineNumber - LINE_NUMBER_OFFSET, 0);
+  sourceEl.scrollTop = index * height - sourceEl.clientHeight / CENTER_DIVISOR;
+}
+
+function onPreviewLinkClick(event) {
+  const anchor = event.target.closest && event.target.closest('a');
+  const href = anchor && (anchor.getAttribute('data-memo-href') || anchor.getAttribute('href'));
+  if (!href) {
+    return;
+  }
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
+  vscode.postMessage({ type: MESSAGE_OPEN_LINK, href });
+}
+
+document.addEventListener('click', onPreviewLinkClick, true);
 sourceEl.addEventListener('input', onSourceInput);
 sourceEl.addEventListener('scroll', () => {
   sourceGutterEl.scrollTop = sourceEl.scrollTop;

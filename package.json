@@ -2,7 +2,7 @@
   "name": "md-preview-gutter",
   "displayName": "Markdown Preview Gutter",
   "description": "Default Markdown preview with 1-based source line numbers.",
-  "version": "0.1.4",
+  "version": "0.2.4",
   "publisher": "MartinChen1973",
   "engines": {
     "vscode": "^1.85.0"
@@ -11,9 +11,16 @@
     "Other"
   ],
   "activationEvents": [
+    "onStartupFinished",
     "onLanguage:markdown",
     "onCustomEditor:mdPreviewGutter.editor",
-    "onCommand:mdPreviewGutter.open"
+    "onCommand:mdPreviewGutter.open",
+    "onCommand:mdPreviewGutter.openSidePreview",
+    "onCommand:mdPreviewGutter.openPanel",
+    "onCommand:mdPreviewGutter.openMainPreview",
+    "onCommand:mdPreviewGutter.showPreview",
+		"onCommand:mdPreviewGutter.showSource",
+		"onCommand:mdPreviewGutter.openAtLine"
   ],
   "main": "./extension.js",
   "license": "MIT",
@@ -40,7 +47,7 @@
             "filenamePattern": "*.markdown"
           }
         ],
-        "priority": "default"
+        "priority": "option"
       }
     ],
     "commands": [
@@ -48,28 +55,136 @@
         "command": "mdPreviewGutter.open",
         "title": "Open Preview with Line Numbers",
         "category": "Markdown Preview Gutter"
+      },
+      {
+        "command": "mdPreviewGutter.showPreview",
+        "title": "Show Gutter Preview",
+        "icon": "$(open-preview)",
+        "category": "Markdown Preview Gutter"
+      },
+      {
+        "command": "mdPreviewGutter.showSource",
+        "title": "Show Markdown Source",
+        "icon": "$(markdown)",
+        "category": "Markdown Preview Gutter"
+      },
+      {
+        "command": "mdPreviewGutter.openPanel",
+        "title": "Open Gutter Preview (Cursor-safe)",
+        "category": "Markdown Preview Gutter"
+      },
+      {
+        "command": "mdPreviewGutter.openSidePreview",
+        "title": "Open Preview with Line Gutter",
+        "category": "Markdown Preview Gutter"
+      },
+      {
+        "command": "mdPreviewGutter.openMainPreview",
+        "title": "Open Main Preview with Line Gutter",
+        "category": "Markdown Preview Gutter"
       }
     ],
     "menus": {
+      "explorer/context": [
+        {
+          "command": "mdPreviewGutter.openPanel",
+          "when": "resourceExtname == .md",
+          "group": "navigation@1"
+        }
+      ],
       "editor/title": [
         {
-          "when": "resourceLangId == markdown",
+          "when": "resourceLangId == markdown && activeCustomEditorId != 'mdPreviewGutter.editor'",
           "command": "mdPreviewGutter.open",
           "group": "navigation"
+        },
+        {
+          "when": "activeCustomEditorId == 'mdPreviewGutter.editor' && mdPreviewGutter.mode == 'source'",
+          "command": "mdPreviewGutter.showPreview",
+          "group": "navigation@1"
+        },
+        {
+          "when": "activeCustomEditorId == 'mdPreviewGutter.editor' && mdPreviewGutter.mode == 'preview'",
+          "command": "mdPreviewGutter.showSource",
+          "group": "navigation@2"
         }
       ]
     },
+    "markdown.markdownItPlugins": true,
     "markdown.previewStyles": [
       "./preview.css"
     ],
     "markdown.previewScripts": [
       "./preview.js"
     ],
+    "configuration": {
+      "title": "Markdown Preview Gutter",
+      "properties": {
+        "mdPreviewGutter.useCustomEditor": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use the Markdown Preview Gutter custom editor. When false, line numbers are added to the built-in Markdown preview (recommended on Cursor)."
+        },
+        "mdPreviewGutter.autoOpenOnTextEditor": {
+          "type": "boolean",
+          "default": false,
+          "description": "When useCustomEditor is true, open the custom Gutter editor after a Markdown text tab opens."
+        },
+        "mdPreviewGutter.forceAutoOpen": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use auto-open on VS Code as well as Cursor."
+        },
+        "mdPreviewGutter.closeTextTabAfterPanel": {
+          "type": "boolean",
+          "default": true,
+          "description": "Close the Markdown text tab after opening Gutter (avoids Cursor Preview toggle stuck on source)."
+        },
+        "mdPreviewGutter.autoOpenSidePreview": {
+          "type": "boolean",
+          "default": false,
+          "description": "When useCustomEditor is false, open preview with line gutter whenever you focus a Markdown source tab."
+        },
+        "mdPreviewGutter.previewPlacement": {
+          "type": "string",
+          "enum": ["main", "side"],
+          "default": "main",
+          "description": "Where Open Preview with Line Gutter opens: main tab (default Preview position) or side column."
+        }
+      }
+    },
     "configurationDefaults": {
       "workbench.editorAssociations": {
-        "*.md": "mdPreviewGutter.editor",
-        "*.markdown": "mdPreviewGutter.editor"
+        "*.md": "default",
+        "*.markdown": "default"
       }
-    }
+    },
+    "keybindings": [
+      {
+        "command": "-markdown.showPreview",
+        "key": "shift+ctrl+v",
+        "when": "editorLangId == markdown"
+      },
+      {
+        "command": "-markdown.showPreviewToSide",
+        "key": "ctrl+k v",
+        "when": "editorLangId == markdown"
+      },
+      {
+        "command": "mdPreviewGutter.showPreview",
+        "key": "shift+ctrl+v",
+        "when": "activeCustomEditorId == 'mdPreviewGutter.editor' && mdPreviewGutter.mode == 'source'"
+      },
+      {
+        "command": "mdPreviewGutter.openSidePreview",
+        "key": "shift+ctrl+v",
+        "when": "editorLangId == markdown && !mdPreviewGutter.customEditorEnabled"
+      },
+      {
+        "command": "mdPreviewGutter.openSidePreview",
+        "key": "ctrl+k v",
+        "when": "editorLangId == markdown && !mdPreviewGutter.customEditorEnabled"
+      }
+    ]
   }
 }

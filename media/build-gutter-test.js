@@ -19,9 +19,6 @@ html, body { height: 100%; }
 </style>
 </head>
 <body data-mode="preview">
-  <div id="toggle-group">
-    <button type="button" class="toggle-tab active">Preview</button>
-  </div>
   <div id="preview-wrap">
     <div id="md-preview-gutter"></div>
     <div id="preview" class="markdown-body">${body}</div>

@@ -1,29 +1,25 @@
 # Markdown Preview Gutter
 
-A Cursor / VS Code Markdown preview that shows **1-based source line numbers** in a left gutter, so review comments can cite a line while you look at the rendered document.
+Adds **1-based source line numbers** beside the **built-in** Markdown preview (Cursor / VS Code), so you can cite lines while reading the rendered document.
 
-## Install from VSIX
+## Recommended mode (0.2+, especially Cursor)
 
-1. Install the `.vsix` via **Extensions → … → Install from VSIX…**, or:
-
-   `cursor --install-extension md-preview-gutter-0.1.4.vsix`
-
-2. **Developer: Reload Window**
-3. Close and reopen `.md` tabs.
-
-## Default editor
-
-This build associates `*.md` / `*.markdown` with the gutter preview. To use the normal text editor for one file: tab context menu → **Reopen Editor With…**.
-
-To stop using it as the default:
+Leave the normal Markdown editor and **Preview** toggle as-is. Line numbers are injected via `markdown.previewScripts` / `markdown.previewStyles`.
 
 ```json
-"workbench.editorAssociations": {
-  "*.md": "default",
-  "*.markdown": "default"
-}
+"mdPreviewGutter.useCustomEditor": false
 ```
 
-## Commands
+Open preview with the tab **Preview** control, **Ctrl+Shift+V**, or **Open Preview to the Side**.
 
-- **Markdown Preview Gutter: Open Preview with Line Numbers**
+## Optional custom editor
+
+Set `"mdPreviewGutter.useCustomEditor": true` to use the separate Gutter custom editor (better on plain VS Code; often problematic on Cursor).
+
+## Install
+
+**Extensions → Install from VSIX…** or:
+
+`cursor --install-extension md-preview-gutter-0.2.0.vsix`
+
+Then **Developer: Reload Window**.

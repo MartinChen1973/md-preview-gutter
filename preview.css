@@ -4,17 +4,18 @@
 
 body {
   position: relative;
-  padding-left: var(--md-preview-gutter-width);
+  padding-left: var(--md-preview-gutter-width) !important;
 }
 
 #md-preview-gutter {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: var(--md-preview-gutter-width);
-  min-height: 100%;
+  height: 100vh;
   pointer-events: none;
-  z-index: 1;
+  z-index: 1000;
+  overflow: visible;
 }
 
 .md-preview-gutter-mark {
@@ -23,7 +24,7 @@ body {
   transform: translateY(0.15em);
   font-size: 0.75em;
   line-height: 1;
-  color: var(--vscode-editorLineNumber-foreground);
+  color: var(--vscode-editorLineNumber-foreground, #6e6e6e);
   font-variant-numeric: tabular-nums;
   user-select: none;
 }

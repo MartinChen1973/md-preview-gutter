@@ -1,5 +1,6 @@
 $ErrorActionPreference = 'Stop'
-$vsix = Join-Path $PSScriptRoot 'md-preview-gutter-0.1.4.vsix'
+$package = Get-Content (Join-Path $PSScriptRoot 'package.json') | ConvertFrom-Json
+$vsix = Join-Path $PSScriptRoot ('{0}-{1}.vsix' -f $package.name, $package.version)
 if (-not (Test-Path $vsix)) {
     Write-Error "Missing $vsix. Run: npx --yes @vscode/vsce@2.26.1 package --allow-missing-repository"
 }

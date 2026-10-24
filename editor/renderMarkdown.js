@@ -8,6 +8,8 @@ const {
   TYPOGRAPHER_FALSE,
 } = require('./constants');
 
+const UNSAFE_LINK_RE = /^(javascript|vbscript|data):/i;
+
 function attachLineAttr(token) {
   if (!token.map || token.nesting !== TOKEN_OPEN_NESTING) {
     return;
@@ -31,6 +33,7 @@ function createEngine() {
     typographer: TYPOGRAPHER_FALSE,
   });
   md.use(sourceLinePlugin);
+  md.validateLink = (url) => !UNSAFE_LINK_RE.test(url);
   tryAttachTables(md);
   return md;
 }
